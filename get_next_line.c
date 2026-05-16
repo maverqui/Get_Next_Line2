@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeverqu <maeverqu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maeverqu <mae.verquin@learner.42.tech>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 13:21:23 by maeverqu          #+#    #+#             */
-/*   Updated: 2026/05/15 17:45:04 by maeverqu         ###   ########.fr       */
+/*   Updated: 2026/05/16 20:04:52 by maeverqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,31 @@ int read_file(int fd, char **stash)
 	return (1);
 }
 
-char *clean_stash(char **stash, char **line)
+void	clean_stash(char *stash)
 {
-	char *new_stash;
+	size_t	i;
+	size_t	j;
 
-	ft_strlen(*line);
-	return (new_stash);
+	i = 0;
+	while(stash[i] && stash[i] != '\n')
+		i++;
+	if (stash[i] == '\n')
+		i++;
+	j = 0;
+	while (stash[i])
+	{
+		stash[j] = stash[i];
+		i++;
+		j++;
+	}
+	stash[j] = '\0';
 }
 
 char *get_next_line(int fd)
 {
-	char *line;
+	char		*line;
 	static char *stash;
 
-	if (BUFFER_SIZE <= 0)
-		return (NULL);
 	if (stash == NULL)
 	{
 		stash = malloc(sizeof(char));
@@ -54,30 +64,37 @@ char *get_next_line(int fd)
 		if (!stash)
 			return (NULL);
 	}
-	read_file(fd, &stash);
+	if (read_file(fd, &stash) == 0)
+		return (NULL);
+	if (stash[0] == '\0')
+	{
+		free(stash);
+		stash = NULL;
+		return (NULL);
+	}
 	line = get_line(stash);
-	clean_stash(&stash, line);
+	clean_stash(stash);
 	return (line);
 }
 
-#include "get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
+// #include "get_next_line.h"
+// #include <fcntl.h>
+// #include <stdio.h>
+// #include <unistd.h>
 
-int main(void)
-{
-	int 	fd;
-	char 	*line;
+// int main(void)
+// {
+// 	int 	fd;
+// 	char 	*line;
 
-	fd = open("test.txt", O_RDONLY);
-	if (fd < 0)
-		return (1);
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", line);
-		free(line);
-	}
-	close(fd);
-	return (0);
-}
+// 	fd = open("test.txt", O_RDONLY);
+// 	if (fd < 0)
+// 		return (1);
+// 	while ((line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
